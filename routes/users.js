@@ -15,8 +15,8 @@ router.get('/addUser', function(req, res, next) {
 router.get('/checkuser',function (req,res,next) {
     userDao.check(req,res,next);
 });
-router.get('/query', function(req, res, next) {
-    userDao.queryById(req, res, next);
+router.get('/login', function(req, res, next) {
+    userDao.login(req, res, next);
 });
 router.post('/updateUser', function(req, res, next) {
     userDao.update(req, res, next);

@@ -5,6 +5,7 @@ var user = {
     update:'update user set name=?, password=? where phone=?',
     delete: 'delete from user where id=?',
     queryById: 'select * from user where phone=?',
+    loginin: 'select * from user where phone=? and password=?',
     queryAll: 'select * from user'
 };
 

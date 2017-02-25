@@ -28,30 +28,17 @@ module.exports = {
             var phone = +req.query.phone; // 为了拼凑正确的sql语句，这里要转下整数
             // 建立连接，向表中插入值
             // 'INSERT INTO user(id, name, age) VALUES(0,?,?)',
-            connection.query($sql.queryById, phone, function (err, result) {
-                console.log(result, result.length)
-                if (result.length == 0) {
-                    connection.query($sql.insert, [param.name, param.phone,param.password], function (err, result) {
-                        console.log(err)
-                        if (result) {
-                            result = {
-                                code: 200,
-                                msg: '增加成功'
-                            };
-                        }
-
-                        // 以json形式，把操作结果返回给前台页面
-                        jsonWrite(res, result);
-                        // 释放连接
-                        connection.release();
-                    });
+            connection.query($sql.insert, [param.name, param.phone, param.password], function (err, result) {
+                if (result) {
+                    result = {
+                        code: 200,
+                        msg: '增加成功'
+                    };
                 }
-                else {
-                    jsonWrite(res, {
-                        code: 401,
-                        msg: '用户已存在'
-                    });
-                }
+                // 以json形式，把操作结果返回给前台页面
+                jsonWrite(res, result);
+                // 释放连接
+                connection.release();
             });
         });
     },
@@ -100,15 +87,27 @@ module.exports = {
         });
 
     },
-    queryById: function (req, res, next) {
-        var phone = +req.query.phone; // 为了拼凑正确的sql语句，这里要转下整数
+    login: function (req, res, next) {
         pool.getConnection(function (err, connection) {
-            connection.query($sql.queryById, phone, function (err, result) {
+            connection.query($sql.loginin, [req.query.phone, req.query.password], function (err, result) {
+                console.log('result', result)
+                if (result.length === 0) {
+                    result = {
+                        code: 401,
+                        msg: '该用户不存在或者密码错误'
+                    };
+                }
+                else {
+                    result = {
+                        code: 200,
+                        msg: '登陆成功'
+                    };
+                }
                 jsonWrite(res, result);
                 connection.release();
-
             });
         });
+
     },
     queryAll: function (req, res, next) {
         pool.getConnection(function (err, connection) {
@@ -123,6 +122,19 @@ module.exports = {
         var phone = +req.query.phone; // 为了拼凑正确的sql语句，这里要转下整数
         pool.getConnection(function (err, connection) {
             connection.query($sql.queryById, phone, function (err, result) {
+                console.log('result', result)
+                if (result.length === 0) {
+                    result = {
+                        code: 200,
+                        msg: '尚未注册'
+                    };
+                }
+                else {
+                    result = {
+                        code: 401,
+                        msg: '已经注册'
+                    };
+                }
                 jsonWrite(res, result);
                 connection.release();
             });
