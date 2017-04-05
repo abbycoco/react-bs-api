@@ -91,19 +91,21 @@ module.exports = {
         pool.getConnection(function (err, connection) {
             connection.query($sql.loginin, [req.query.phone, req.query.password], function (err, result) {
                 console.log('result', result)
+                var sendresult='';
                 if (result.length === 0) {
-                    result = {
+                    sendresult = {
                         code: 401,
                         msg: '该用户不存在或者密码错误'
                     };
                 }
                 else {
-                    result = {
+                    sendresult = {
                         code: 200,
-                        msg: '登陆成功'
+                        msg: '登陆成功',
+                        result: result
                     };
                 }
-                jsonWrite(res, result);
+                jsonWrite(res, sendresult);
                 connection.release();
             });
         });
